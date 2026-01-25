@@ -1,26 +1,36 @@
-startCommand: |
-  python manage.py migrate
-  
-  # Create/update superuser
-  python manage.py shell << 'EOF'
-  from django.contrib.auth import get_user_model
-  User = get_user_model()
-  
-  username = 'shrutiadam'
-  email = 'shrutiadam2005@gmail.com'
-  password = 'Shruti@123'
-  
-  try:
-      user = User.objects.get(username=username)
-      user.email = email
-      user.set_password(password)
-      user.is_staff = True
-      user.is_superuser = True
-      user.save()
-      print(f'Updated superuser: {username}')
-  except User.DoesNotExist:
-      User.objects.create_superuser(username, email, password)
-      print(f'Created superuser: {username}')
-  EOF
-  
-  gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT
+services:
+  - type: web
+    name: jarrurat-care-app
+    env: python
+    plan: free
+
+    buildCommand: |
+      pip install -r requirements.txt
+      python backend/manage.py collectstatic --noinput
+
+    startCommand: |
+      python backend/manage.py migrate
+
+      # Create or update superuser
+      python backend/manage.py shell << 'EOF'
+      from django.contrib.auth import get_user_model
+      User = get_user_model()
+
+      username = 'shrutiadam'
+      email = 'shrutiadam2005@gmail.com'
+      password = 'Shruti@123'
+
+      try:
+          user = User.objects.get(username=username)
+          user.email = email
+          user.set_password(password)
+          user.is_staff = True
+          user.is_superuser = True
+          user.save()
+          print(f'Updated superuser: {username}')
+      except User.DoesNotExist:
+          User.objects.create_superuser(username, email, password)
+          print(f'Created superuser: {username}')
+      EOF
+
+      gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT
