@@ -1,42 +1,26 @@
-# render.yaml
-services:
-  # Backend Django API
-  - type: web
-    name: jarrurat-care-backend
-    runtime: python
-    region: singapore
-    rootDirectory: backend  # Point to backend folder
-    buildCommand: |
-      pip install -r requirements.txt
-      python manage.py collectstatic --noinput
-    startCommand: |
-      cd backend && gunicorn jarrurat_care.wsgi:application --bind 0.0.0.0:$PORT
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.9.0
-      - key: SECRET_KEY
-        generateValue: true
-      - key: DEBUG
-        value: "False"
-      - key: ALLOWED_HOSTS
-        value: ".onrender.com,localhost,127.0.0.1"
-    plan: free
-    autoDeploy: true
+startCommand: |
+  python manage.py migrate
   
-  # Frontend React App
-  - type: web
-    name: jarrurat-care-frontend
-    runtime: node
-    region: singapore
-    rootDirectory: frontend
-    buildCommand: |
-      npm install
-      npm run build
-    startCommand: serve -s build
-    envVars:
-      - key: NODE_VERSION
-        value: 18.17.0
-      - key: REACT_APP_API_URL
-        value: https://jarrurat-care-backend.onrender.com
-    plan: free
-    autoDeploy: true
+  # Create/update superuser
+  python manage.py shell << 'EOF'
+  from django.contrib.auth import get_user_model
+  User = get_user_model()
+  
+  username = 'shrutiadam'
+  email = 'shrutiadam2005@gmail.com'
+  password = 'Shruti@123'
+  
+  try:
+      user = User.objects.get(username=username)
+      user.email = email
+      user.set_password(password)
+      user.is_staff = True
+      user.is_superuser = True
+      user.save()
+      print(f'Updated superuser: {username}')
+  except User.DoesNotExist:
+      User.objects.create_superuser(username, email, password)
+      print(f'Created superuser: {username}')
+  EOF
+  
+  gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT
