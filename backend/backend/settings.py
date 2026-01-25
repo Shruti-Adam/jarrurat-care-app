@@ -4,23 +4,25 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # ==============================
 # SECURITY SETTINGS
 # ==============================
 
-# SECRET KEY (from Render Environment Variable)
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-fallback-key")
 
-# DEBUG (False in production)
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-# Allowed hosts for Render
-ALLOWED_HOSTS = ["*", ".onrender.com"]
+ALLOWED_HOSTS = [
+    "jarrurat-care-app.onrender.com",
+]
 
+# Required for Render HTTPS
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 # ==============================
 # APPLICATION DEFINITION
@@ -28,6 +30,7 @@ ALLOWED_HOSTS = ["*", ".onrender.com"]
 
 INSTALLED_APPS = [
     'jazzmin',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -35,11 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Third-party
     'rest_framework',
     'corsheaders',
 
-    # Local apps
     'volunteers',
     'chatbot',
 ]
@@ -56,7 +57,24 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+# ==============================
+# CORS & CSRF (REACT + NETLIFY)
+# ==============================
+
+CORS_ALLOWED_ORIGINS = [
+    "https://jarrurat-care-app.netlify.app",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://jarrurat-care-app.netlify.app",
+    "https://jarrurat-care-app.onrender.com",
+]
+
+# ==============================
+# URLS / WSGI
+# ==============================
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -78,9 +96,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
 # ==============================
-# DATABASE
+# DATABASE (SQLite – OK for now)
 # ==============================
 
 DATABASES = {
@@ -90,26 +107,16 @@ DATABASES = {
     }
 }
 
-
 # ==============================
 # PASSWORD VALIDATION
 # ==============================
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
-
 
 # ==============================
 # INTERNATIONALIZATION
@@ -120,9 +127,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-
 # ==============================
-# STATIC FILES (RENDER READY)
+# STATIC FILES (RENDER)
 # ==============================
 
 STATIC_URL = '/static/'
@@ -130,13 +136,11 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-
 # ==============================
 # DEFAULT PRIMARY KEY
 # ==============================
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 # ==============================
 # JAZZMIN SETTINGS
@@ -147,13 +151,14 @@ JAZZMIN_SETTINGS = {
     "site_header": "LearnSphere Dashboard",
     "site_brand": "LearnSphere",
     "welcome_sign": "Welcome to LearnSphere Admin",
-    "copyright": "LearnSphere",
 
-    "search_model": ["auth.User"],
-
+    # IMPORTANT: point to Netlify frontend
     "topmenu_links": [
-        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "Visit Site", "url": "/", "new_window": True},
+        {
+            "name": "Frontend",
+            "url": "https://jarrurat-care-app.netlify.app",
+            "new_window": True
+        },
     ],
 
     "icons": {
