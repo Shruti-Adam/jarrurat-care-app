@@ -8,20 +8,23 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
+# ==============================
+# SECURITY SETTINGS
+# ==============================
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fallback-key')
+# SECRET KEY (from Render Environment Variable)
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-fallback-key")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG (False in production)
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-
+# Allowed hosts for Render
 ALLOWED_HOSTS = ["*", ".onrender.com"]
 
 
-# Application definition
+# ==============================
+# APPLICATION DEFINITION
+# ==============================
 
 INSTALLED_APPS = [
     'jazzmin',
@@ -31,11 +34,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third-party
     'rest_framework',
     'corsheaders',
+
+    # Local apps
     'volunteers',
     'chatbot',
-    
 ]
 
 MIDDLEWARE = [
@@ -48,7 +54,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -62,7 +67,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.debug',  # ADD THIS LINE
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -74,9 +79,9 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
-
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+# ==============================
+# DATABASE
+# ==============================
 
 DATABASES = {
     'default': {
@@ -86,11 +91,9 @@ DATABASES = {
 }
 
 
-CORS_ALLOW_ALL_ORIGINS = True
-
-
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
+# ==============================
+# PASSWORD VALIDATION
+# ==============================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -108,33 +111,44 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
+# ==============================
+# INTERNATIONALIZATION
+# ==============================
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
+# ==============================
+# STATIC FILES (RENDER READY)
+# ==============================
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+
+# ==============================
+# DEFAULT PRIMARY KEY
+# ==============================
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# ==============================
+# JAZZMIN SETTINGS
+# ==============================
 
 JAZZMIN_SETTINGS = {
     "site_title": "LearnSphere Admin",
     "site_header": "LearnSphere Dashboard",
     "site_brand": "LearnSphere",
-    "site_logo": "images/logo.png",  # optional
     "welcome_sign": "Welcome to LearnSphere Admin",
     "copyright": "LearnSphere",
-    
+
     "search_model": ["auth.User"],
 
     "topmenu_links": [
@@ -146,10 +160,7 @@ JAZZMIN_SETTINGS = {
         "auth": "fas fa-users-cog",
         "auth.user": "fas fa-user",
         "auth.Group": "fas fa-users",
-        "yourapp.Student": "fas fa-user-graduate",
-        "yourapp.Teacher": "fas fa-chalkboard-teacher",
-        "yourapp.GatePass": "fas fa-id-card",
     },
 
-    "theme": "darkly",  # try: flatly, darkly, lumen, cosmo
+    "theme": "darkly",
 }
