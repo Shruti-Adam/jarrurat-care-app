@@ -6,49 +6,44 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ==============================
-# SECURITY SETTINGS
-# ==============================
+# ======================
+# SECURITY
+# ======================
 
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-fallback-key")
+SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")
+DEBUG = False
 
-DEBUG = os.getenv("DEBUG", "False") == "True"
+ALLOWED_HOSTS = ["jarrurat-care-app.onrender.com"]
 
-ALLOWED_HOSTS = [
-    "jarrurat-care-app.onrender.com",
-]
-
-# Required for Render HTTPS
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-# ==============================
-# APPLICATION DEFINITION
-# ==============================
+# ======================
+# APPLICATIONS
+# ======================
 
 INSTALLED_APPS = [
-    'jazzmin',
+    "jazzmin",
 
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
 
-    'rest_framework',
-    'corsheaders',
+    "rest_framework",
+    "corsheaders",
 
-    'volunteers',
-    'chatbot',
+    "volunteers",
+    "chatbot",
 ]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # MUST be here
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -57,122 +52,78 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-
-# ==============================
-# CORS & CSRF (REACT + NETLIFY)
-# ==============================
+# ======================
+# CORS / CSRF
+# ======================
 
 CORS_ALLOWED_ORIGINS = [
     "https://jarrurat-care-app.netlify.app",
 ]
-
-CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
     "https://jarrurat-care-app.netlify.app",
     "https://jarrurat-care-app.onrender.com",
 ]
 
-# ==============================
-# URLS / WSGI
-# ==============================
+# ======================
+# URLS
+# ======================
 
-ROOT_URLCONF = 'backend.urls'
+ROOT_URLCONF = "backend.urls"
+WSGI_APPLICATION = "backend.wsgi.application"
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
-
-WSGI_APPLICATION = 'backend.wsgi.application'
-
-# ==============================
-# DATABASE (SQLite – OK for now)
-# ==============================
+# ======================
+# DATABASE
+# ======================
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
-# ==============================
-# PASSWORD VALIDATION
-# ==============================
+# ======================
+# I18N
+# ======================
 
-AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
-]
-
-# ==============================
-# INTERNATIONALIZATION
-# ==============================
-
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = "en-us"
+TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-# ==============================
-# STATIC FILES (RENDER)
-# ==============================
+# ======================
+# STATIC FILES (THIS FIXES YOUR ISSUE)
+# ======================
 
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# Add this for production on Render
-if 'RENDER' in os.environ:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# ==============================
-# DEFAULT PRIMARY KEY
-# ==============================
+# ======================
+# DEFAULT PK
+# ======================
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# ==============================
-# JAZZMIN SETTINGS
-# ==============================
+# ======================
+# JAZZMIN
+# ======================
 
 JAZZMIN_SETTINGS = {
-    "site_title": "LearnSphere Admin",
-    "site_header": "LearnSphere Dashboard",
-    "site_brand": "LearnSphere",
-    "welcome_sign": "Welcome to LearnSphere Admin",
+    "site_title": "Jarrurat Care Admin",
+    "site_header": "Jarrurat Care Dashboard",
+    "site_brand": "Jarrurat Care",
+    "welcome_sign": "Welcome to Admin Panel",
 
-    # IMPORTANT: point to Netlify frontend
     "topmenu_links": [
         {
             "name": "Frontend",
             "url": "https://jarrurat-care-app.netlify.app",
-            "new_window": True
+            "new_window": True,
         },
     ],
-
-    "icons": {
-        "auth": "fas fa-users-cog",
-        "auth.user": "fas fa-user",
-        "auth.Group": "fas fa-users",
-    },
 
     "theme": "darkly",
 }

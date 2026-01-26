@@ -5,34 +5,8 @@ services:
     rootDir: backend
 
     buildCommand: |
-      pip install -r ../requirements.txt
+      pip install -r requirements.txt
       python manage.py collectstatic --noinput
       python manage.py migrate
-      
-    startCommand: |
-      gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT
 
-
-      # Create or update superuser
-      python backend/manage.py shell << 'EOF'
-      from django.contrib.auth import get_user_model
-      User = get_user_model()
-
-      username = 'shrutiadam'
-      email = 'shrutiadam2005@gmail.com'
-      password = 'Shruti@123'
-
-      try:
-          user = User.objects.get(username=username)
-          user.email = email
-          user.set_password(password)
-          user.is_staff = True
-          user.is_superuser = True
-          user.save()
-          print(f'Updated superuser: {username}')
-      except User.DoesNotExist:
-          User.objects.create_superuser(username, email, password)
-          print(f'Created superuser: {username}')
-      EOF
-
-      gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT
+    startCommand: gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT
