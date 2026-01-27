@@ -96,10 +96,9 @@ USE_TZ = True
 # STATIC FILES (THIS FIXES YOUR ISSUE)
 # ======================
 
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # ======================
 # DEFAULT PK
