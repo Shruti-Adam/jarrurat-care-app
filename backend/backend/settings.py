@@ -24,23 +24,23 @@ CSRF_COOKIE_SECURE = True
 # ======================
 # APPLICATIONS
 # ======================
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 INSTALLED_APPS = [
-    "jazzmin",  # MUST be first
-
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "rest_framework",
     "corsheaders",
-
     "volunteers",
     "chatbot",
 ]
+
 
 # ======================
 # MIDDLEWARE
@@ -77,6 +77,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 
 # ======================
@@ -121,14 +122,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-# ======================
-# STATIC FILES  ✅ (Jazzmin fix)
-# ======================
-
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # ======================
 # DEFAULT PK
