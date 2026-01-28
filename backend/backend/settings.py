@@ -13,7 +13,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")
 DEBUG = False
 
-ALLOWED_HOSTS = ["jarrurat-care-app.onrender.com"]
+ALLOWED_HOSTS = [
+    "jarrurat-care-app.onrender.com",
+]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SESSION_COOKIE_SECURE = True
@@ -24,7 +26,7 @@ CSRF_COOKIE_SECURE = True
 # ======================
 
 INSTALLED_APPS = [
-    "jazzmin",
+    "jazzmin",  # MUST be first
 
     "django.contrib.admin",
     "django.contrib.auth",
@@ -40,6 +42,10 @@ INSTALLED_APPS = [
     "chatbot",
 ]
 
+# ======================
+# MIDDLEWARE
+# ======================
+
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -53,6 +59,26 @@ MIDDLEWARE = [
 ]
 
 # ======================
+# TEMPLATES  ✅ (THIS WAS MISSING → CAUSED 500 ERROR)
+# ======================
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+
+# ======================
 # CORS / CSRF
 # ======================
 
@@ -60,13 +86,15 @@ CORS_ALLOWED_ORIGINS = [
     "https://jarrurat-care-app.netlify.app",
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 CSRF_TRUSTED_ORIGINS = [
     "https://jarrurat-care-app.netlify.app",
     "https://jarrurat-care-app.onrender.com",
 ]
 
 # ======================
-# URLS
+# URLS / WSGI
 # ======================
 
 ROOT_URLCONF = "backend.urls"
@@ -93,12 +121,13 @@ USE_I18N = True
 USE_TZ = True
 
 # ======================
-# STATIC FILES (THIS FIXES YOUR ISSUE)
+# STATIC FILES  ✅ (Jazzmin fix)
 # ======================
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # ======================
 # DEFAULT PK
