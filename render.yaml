@@ -2,11 +2,22 @@ services:
   - type: web
     name: jarrurat-care-app
     env: python
-    rootDir: backend
-
+    plan: free
+    region: oregon  # Choose your preferred region
+    
+    # Remove rootDir or set it correctly
+    # rootDir: backend  # Remove or adjust this
+    
     buildCommand: |
+      pip install --upgrade pip
       pip install -r requirements.txt
       python manage.py collectstatic --noinput
       python manage.py migrate
-
-    startCommand: gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT
+    
+    startCommand: gunicorn backend.wsgi:application
+    
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0  # Use a stable version, not 3.13.4
+      - key: SECRET_KEY
+        generateValue: true
